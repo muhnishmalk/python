@@ -18,6 +18,7 @@ product_conditions = {
     'Remanufactured': {'Description': [], 'Short Description': [], 'Total': []},
     'Recertified': {'Description': [], 'Short Description': [], 'Total': []}
 }
+products =[]
 # Read the data from the file and update condition data
 with open(data_file_path, 'r') as data_file:
     for line in data_file:
@@ -25,24 +26,33 @@ with open(data_file_path, 'r') as data_file:
         for condition in product_conditions:
             if check_condition(description, condition) or check_condition(short_description, condition):
                 update_data(product_conditions, condition, description, short_description)
+                products.append({
+                    'desc':description,
+                    'shortDesc':short_description,
+                    'condition':condition
+                })
 # Add "New" condition with no data
 product_conditions['New'] = {'Description': [], 'Short Description': [], 'Total': []}
-# Write the condition data to a CSV file
-csv_file_path = 'condition_data.csv'
-with open(csv_file_path, 'w', newline='') as csv_file:
-    csv_writer = csv.writer(csv_file)
-    # Write the header row
-    csv_writer.writerow(['Condition', 'Description', 'Short Description', 'Total'])
-    for condition, data in product_conditions.items():
-        description_data = '\n'.join(data['Description'])
-        short_description_data = '\n'.join(data['Short Description'])
-        total_data = '\n'.join(data['Total'])
-        csv_writer.writerow([condition, description_data, short_description_data, total_data])
-print("Condition data including 'New' added and migrated to 'condition_data.csv'.")
+products.append({
+                    'desc':description,
+                    'shortDesc':short_description,
+                    'condition':"New"
+                })
+csv_file = 'sample.csv'
+fieldnames = products[0].keys()
 
-React
+# Write the data to the CSV file
+with open(csv_file, 'w', newline='') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    
+    # Write the header (field names)
+    writer.writeheader()
+    
+    # Write the data
+    writer.writerows(products)
 
-Reply
+print(f'CSV file "{csv_file}" has been generated.')
+
 
 
 
